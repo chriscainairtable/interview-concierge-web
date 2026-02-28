@@ -160,9 +160,27 @@ function BlockedScreen({ error, onTextOnly }) {
     );
 }
 
+// ─── Thank You Screen ──────────────────────────────────────────────────────────
+
+function ThankYouScreen({ name }) {
+    return (
+        <div className="min-h-screen bg-gray-950 flex items-center justify-center p-8">
+            <div className="max-w-sm text-center">
+                <div className="w-14 h-14 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                </div>
+                <h1 className="text-white text-2xl font-semibold mb-3">You&apos;re all set, {name}.</h1>
+                <p className="text-gray-500 text-base">We&apos;ll be in touch soon.</p>
+            </div>
+        </div>
+    );
+}
+
 // ─── Recap Screen ──────────────────────────────────────────────────────────────
 
-function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
+function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onThankYou }) {
     const [session, setSession] = useState(null);
     const [responses, setResponses] = useState([]);
 
@@ -205,6 +223,12 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
     const [otherEmails, setOtherEmails] = useState('');
     const [sendStatus, setSendStatus] = useState('idle');
     const [sendError, setSendError] = useState(null);
+
+    useEffect(() => {
+        if (sendStatus !== 'sent') return;
+        const t = setTimeout(onThankYou, 2000);
+        return () => clearTimeout(t);
+    }, [sendStatus, onThankYou]);
 
     const handleSend = async () => {
         if (sendStatus !== 'idle') return;
@@ -711,6 +735,7 @@ export default function App() {
     const [savedAt, setSavedAt] = useState(null);
     const [saveError, setSaveError] = useState(null);
     const [isComplete, setIsComplete] = useState(false);
+    const [isThankYou, setIsThankYou] = useState(false);
     const [questionOverride, setQuestionOverride] = useState(null); // null | 'speak' | 'type'
 
     const videoRef = useRef(null);
@@ -929,7 +954,8 @@ export default function App() {
     if (!intervieweeName) return <IntroScreen onStart={(name, email, inputMode) => { if (inputMode === 'type') setPermStatus('text-only'); setIntervieweeName(name); setIntervieweeEmail(email); }} onAdmin={() => setView('admin')} />;
     if (permStatus === 'checking') return <CheckingScreen />;
     if (permStatus === 'blocked') return <BlockedScreen error={permError} onTextOnly={() => setPermStatus('text-only')} />;
-    if (isComplete) return <RecapScreen sessionRecordId={sessionRecordId} intervieweeName={intervieweeName} intervieweeEmail={intervieweeEmail} />;
+    if (isThankYou) return <ThankYouScreen name={intervieweeName} />;
+    if (isComplete) return <RecapScreen sessionRecordId={sessionRecordId} intervieweeName={intervieweeName} intervieweeEmail={intervieweeEmail} onThankYou={() => setIsThankYou(true)} />;
 
     const effectiveIsTextOnly = questionOverride === 'type' || (questionOverride === null && permStatus === 'text-only');
     return (
