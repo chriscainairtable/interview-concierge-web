@@ -66,7 +66,19 @@ WRONG: `{ 'Session': [{ id: recordId }] }` → INVALID_RECORD_ID error
 RIGHT: `{ 'Session': [recordId] }` — plain string inside the array
 
 WRONG: `{record.fields['Interview Brief']}` → React error #31 (renders an object)
-RIGHT: `{record.fields['Interview Brief']?.value ?? record.fields['Interview Brief'] ?? ''}` — defensive extraction works for both REST and SDK
+WRONG: `field?.value ?? field ?? ''` → subtle bug: when AI field is still generating, `value` is `null`, so `null ?? field` falls through to the raw object — same React error #31
+
+RIGHT: use `getAIValue()` (defined at top of App.jsx):
+```js
+const getAIValue = (field) => {
+    if (!field) return null;
+    if (typeof field === 'object') return field.value || null;
+    return field;
+};
+// Usage:
+getAIValue(record.fields['Interview Brief']) ?? ''
+```
+Returns `null` while generating (safe to gate on), returns the string once done. Works for both REST (object) and SDK (plain string).
 
 ## PasscodeGate
 
