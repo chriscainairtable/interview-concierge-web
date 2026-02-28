@@ -913,7 +913,7 @@ export default function App() {
             // Write the response
             await createRecord(RESPONSES_TABLE, {
                 'Response ID': `resp-${Date.now()}`,
-                'Session': [{ id: currentSessionId }],
+                'Session': [currentSessionId],
                 'Question Number': questionIndex + 1,
                 'Question Text': QUESTIONS[questionIndex],
                 'Raw Transcript': fullTranscript,
