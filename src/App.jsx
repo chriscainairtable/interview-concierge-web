@@ -16,11 +16,12 @@ const RESPONSES_TABLE = 'Interview Responses';
 function IntroScreen({ onStart, onAdmin }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
+    const [inputMode, setInputMode] = useState('speak');
     const isValid = name.trim() && email.includes('@') && email.includes('.');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (isValid) onStart(name.trim(), email.trim());
+        if (isValid) onStart(name.trim(), email.trim(), inputMode);
     };
 
     return (
@@ -43,15 +44,43 @@ function IntroScreen({ onStart, onAdmin }) {
 
                 {/* Heading */}
                 <p className="text-gray-600 text-xs font-mono uppercase tracking-widest mb-2">Discovery Interview</p>
-                <h1 className="text-white text-2xl font-semibold mb-3 leading-snug">Interview Concierge</h1>
-                <p className="text-gray-500 text-sm leading-relaxed mb-8">
-                    4 short questions. Speak your answers — your responses are captured and summarized automatically.
+                <h1 className="text-white text-3xl font-semibold mb-3 leading-snug">Interview Concierge</h1>
+                <p className="text-gray-500 text-base leading-relaxed mb-6">
+                    {inputMode === 'speak'
+                        ? '4 short questions. Speak your answers — your responses are captured and summarized automatically.'
+                        : '4 short questions. Type your answers — your responses are captured and summarized automatically.'}
                 </p>
+
+                {/* Input mode toggle */}
+                <div className="flex gap-2 mb-8">
+                    <button
+                        type="button"
+                        onClick={() => setInputMode('speak')}
+                        className={`flex-1 py-2.5 rounded-full text-sm font-medium transition-all ${
+                            inputMode === 'speak'
+                                ? 'bg-white text-gray-950'
+                                : 'bg-gray-900 text-gray-500 border border-gray-800 hover:text-gray-300'
+                        }`}
+                    >
+                        🎤 Speak
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => setInputMode('type')}
+                        className={`flex-1 py-2.5 rounded-full text-sm font-medium transition-all ${
+                            inputMode === 'type'
+                                ? 'bg-white text-gray-950'
+                                : 'bg-gray-900 text-gray-500 border border-gray-800 hover:text-gray-300'
+                        }`}
+                    >
+                        ⌨️ Type
+                    </button>
+                </div>
 
                 {/* Form */}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <p className="text-gray-400 text-sm mb-2">What&apos;s your name?</p>
+                        <p className="text-gray-400 text-base mb-2">What&apos;s your name?</p>
                         <input
                             type="text"
                             value={name}
@@ -62,7 +91,7 @@ function IntroScreen({ onStart, onAdmin }) {
                         />
                     </div>
                     <div className="mb-6">
-                        <p className="text-gray-400 text-sm mb-2">Your email address</p>
+                        <p className="text-gray-400 text-base mb-2">Your email address</p>
                         <input
                             type="email"
                             value={email}
@@ -74,7 +103,7 @@ function IntroScreen({ onStart, onAdmin }) {
                     <button
                         type="submit"
                         disabled={!isValid}
-                        className={`w-full py-3 rounded-lg text-sm font-medium transition-all ${
+                        className={`w-full py-3 rounded-lg text-base font-medium transition-all ${
                             isValid
                                 ? 'bg-white text-gray-950 hover:bg-gray-100 cursor-pointer'
                                 : 'bg-gray-800 text-gray-600 cursor-not-allowed'
@@ -95,7 +124,7 @@ function CheckingScreen() {
         <div className="min-h-screen bg-gray-950 flex items-center justify-center">
             <div className="text-center">
                 <div className="w-10 h-10 border-2 border-gray-700 border-t-white rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-gray-500 text-sm">Requesting camera &amp; microphone…</p>
+                <p className="text-gray-500 text-base">Requesting camera &amp; microphone…</p>
             </div>
         </div>
     );
@@ -112,8 +141,8 @@ function BlockedScreen({ error, onTextOnly }) {
                         <line x1="9" y1="9" x2="15" y2="15" />
                     </svg>
                 </div>
-                <h2 className="text-white text-lg font-semibold mb-2">Camera &amp; Mic Blocked</h2>
-                <p className="text-gray-500 text-sm mb-6 leading-relaxed">
+                <h2 className="text-white text-xl font-semibold mb-2">Camera &amp; Mic Blocked</h2>
+                <p className="text-gray-500 text-base mb-6 leading-relaxed">
                     This app needs camera and microphone access. Grant permissions in your browser, then reload.
                 </p>
                 <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 text-left mb-5">
@@ -205,7 +234,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
                     </div>
                     <div>
                         <p className="text-gray-500 text-xs font-mono uppercase tracking-widest">Interview Complete</p>
-                        <h1 className="text-white text-xl font-semibold">Thanks, {intervieweeName}.</h1>
+                        <h1 className="text-white text-2xl font-semibold">Thanks, {intervieweeName}.</h1>
                     </div>
                 </div>
 
@@ -214,7 +243,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
                     <p className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-3">What we heard</p>
                     <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
                         {interviewBrief ? (
-                            <p className={`text-gray-200 text-sm leading-relaxed transition-opacity duration-500 ${briefVisible ? 'opacity-100' : 'opacity-0'}`}>
+                            <p className={`text-gray-200 text-base leading-relaxed transition-opacity duration-500 ${briefVisible ? 'opacity-100' : 'opacity-0'}`}>
                                 {interviewBrief}
                             </p>
                         ) : (
@@ -236,7 +265,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
                                 <div key={r.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
                                     <p className="text-gray-600 text-xs mb-2">Q{i + 1} — {r.fields['Question Text'] || ''}</p>
                                     {cleaned ? (
-                                        <p className="text-gray-200 text-sm leading-relaxed">{cleaned}</p>
+                                        <p className="text-gray-200 text-base leading-relaxed">{cleaned}</p>
                                     ) : (
                                         <div className="flex items-center gap-2">
                                             <div className="w-3 h-3 border border-gray-700 border-t-gray-500 rounded-full animate-spin flex-shrink-0" />
@@ -252,18 +281,18 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
                 {/* Follow-up */}
                 {sendStatus === 'sent' ? (
                     <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                        <div className="flex items-center gap-2 text-green-400 text-sm mb-2">
+                        <div className="flex items-center gap-2 text-green-400 text-base mb-2">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                             On its way
                         </div>
-                        <p className="text-gray-500 text-sm">Someone from our team will follow up with you shortly.</p>
+                        <p className="text-gray-500 text-base">Someone from our team will follow up with you shortly.</p>
                     </div>
                 ) : (
                     <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                        <p className="text-gray-400 text-sm font-medium mb-1">Want a copy of this conversation?</p>
-                        <p className="text-gray-600 text-xs mb-4 leading-relaxed">We&apos;ll send you a short note with what you shared today.</p>
+                        <p className="text-gray-400 text-base font-medium mb-1">Want a copy of this conversation?</p>
+                        <p className="text-gray-600 text-sm mb-4 leading-relaxed">We&apos;ll send you a short note with what you shared today.</p>
 
                         <label className="flex items-center gap-3 cursor-pointer mb-4">
                             <input
@@ -272,7 +301,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
                                 onChange={e => setSendToSelf(e.target.checked)}
                                 className="w-4 h-4 accent-white cursor-pointer"
                             />
-                            <span className="text-gray-300 text-sm">Send to <span className="text-white">{intervieweeEmail}</span></span>
+                            <span className="text-gray-300 text-base">Send to <span className="text-white">{intervieweeEmail}</span></span>
                         </label>
 
                         <div className="mb-4">
@@ -281,7 +310,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
                                 onChange={e => setOtherEmails(e.target.value)}
                                 placeholder="Anyone else who should get a copy? (comma-separated)"
                                 rows={2}
-                                className="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-sm placeholder-gray-600 outline-none focus:border-gray-500 resize-none"
+                                className="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-base placeholder-gray-600 outline-none focus:border-gray-500 resize-none"
                             />
                         </div>
 
@@ -295,7 +324,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail }) {
                                 <button
                                     onClick={handleSend}
                                     disabled={sendStatus === 'sending' || (!sendToSelf && !otherEmails.trim())}
-                                    className={`w-full py-2.5 rounded-lg text-sm font-medium transition-all ${
+                                    className={`w-full py-2.5 rounded-lg text-base font-medium transition-all ${
                                         sendStatus === 'sending' || (!sendToSelf && !otherEmails.trim())
                                             ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
                                             : 'bg-white text-gray-950 hover:bg-gray-100 cursor-pointer'
@@ -542,7 +571,7 @@ function AudioLevelBars({ level, isListening }) {
 
 // ─── Interview Screen ──────────────────────────────────────────────────────────
 
-function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLevel, isListening, isSaving, savedAt, saveError, videoRef, onSubmit, transitioning, isTextOnly, onTextChange }) {
+function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLevel, isListening, isSaving, savedAt, saveError, videoRef, onSubmit, transitioning, isTextOnly, onTextChange, onToggleMode, canSwitchToSpeak }) {
     const hasText = transcript.trim().length > 0 || (!isTextOnly && interimTranscript.trim().length > 0);
     const justSaved = savedAt === questionIndex;
     const isLastQuestion = questionIndex === QUESTIONS.length - 1;
@@ -591,7 +620,7 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
                     Question {questionIndex + 1} of {QUESTIONS.length}
                 </p>
 
-                <h1 className="text-white text-xl font-semibold leading-snug mb-6">
+                <h1 className="text-white text-2xl font-semibold leading-snug mb-6">
                     {QUESTIONS[questionIndex]}
                 </h1>
 
@@ -621,6 +650,19 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
                     )}
                 </div>
 
+                {/* Per-question mode toggle */}
+                <div className="flex justify-end mt-2 mb-1">
+                    {!isTextOnly ? (
+                        <button type="button" onClick={onToggleMode} className="text-gray-600 text-xs hover:text-gray-400 transition-colors">
+                            ⌨️ Type instead
+                        </button>
+                    ) : canSwitchToSpeak ? (
+                        <button type="button" onClick={onToggleMode} className="text-gray-600 text-xs hover:text-gray-400 transition-colors">
+                            🎤 Speak instead
+                        </button>
+                    ) : null}
+                </div>
+
                 {/* Error display */}
                 {saveError && (
                     <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 mb-4">
@@ -642,12 +684,12 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
 
                     <div className="flex items-center gap-3">
                         {justSaved && !isSaving && (
-                            <span className="text-green-400 text-sm">Saved ✓</span>
+                            <span className="text-green-400 text-base">Saved ✓</span>
                         )}
                         <button
                             onClick={onSubmit}
                             disabled={!hasText || isSaving || hasActiveTranscription}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                            className={`px-4 py-2.5 rounded-lg text-base font-medium transition-all ${
                                 hasText && !isSaving && !hasActiveTranscription
                                     ? 'bg-white text-gray-950 hover:bg-gray-100 cursor-pointer'
                                     : 'bg-gray-800 text-gray-600 cursor-not-allowed'
@@ -683,6 +725,7 @@ export default function App() {
     const [saveError, setSaveError] = useState(null);
     const [isComplete, setIsComplete] = useState(false);
     const [recapReady, setRecapReady] = useState(false);
+    const [questionOverride, setQuestionOverride] = useState(null); // null | 'speak' | 'type'
 
     const videoRef = useRef(null);
     const recognitionRef = useRef(null);
@@ -691,7 +734,7 @@ export default function App() {
 
     // ── Permissions — only after intro is done ─────────────────────────────────
     useEffect(() => {
-        if (!intervieweeName) return;
+        if (!intervieweeName || permStatus === 'text-only') return;
         let mediaStream = null;
         navigator.mediaDevices
             .getUserMedia({ video: true, audio: true })
@@ -816,6 +859,22 @@ export default function App() {
         setInterimTranscript('');
     }, []);
 
+    // ── Per-question mode toggle ───────────────────────────────────────────────
+    const handleToggleQuestionMode = useCallback(() => {
+        const currentlyType = questionOverride === 'type' || (questionOverride === null && permStatus === 'text-only');
+        accumulatedRef.current = '';
+        setTranscript('');
+        setInterimTranscript('');
+        if (currentlyType) {
+            if (permStatus !== 'granted') return;
+            setQuestionOverride('speak');
+            startListening();
+        } else {
+            stopListening();
+            setQuestionOverride('type');
+        }
+    }, [questionOverride, permStatus, startListening, stopListening]);
+
     // ── Submit answer ──────────────────────────────────────────────────────────
     const handleSubmit = useCallback(async () => {
         if (isSaving) return;
@@ -865,6 +924,7 @@ export default function App() {
                     setInterimTranscript('');
                     setSavedAt(null);
                     setQuestionIndex(nextIndex);
+                    setQuestionOverride(null);
                     setTransitioning(false);
                     if (permStatus === 'granted') startListening();
                 }, 250);
@@ -905,12 +965,13 @@ export default function App() {
 
     // ── Render ─────────────────────────────────────────────────────────────────
     if (view === 'admin') return <AdminView onBack={() => setView('interview')} />;
-    if (!intervieweeName) return <IntroScreen onStart={(name, email) => { setIntervieweeName(name); setIntervieweeEmail(email); }} onAdmin={() => setView('admin')} />;
+    if (!intervieweeName) return <IntroScreen onStart={(name, email, inputMode) => { if (inputMode === 'type') setPermStatus('text-only'); setIntervieweeName(name); setIntervieweeEmail(email); }} onAdmin={() => setView('admin')} />;
     if (permStatus === 'checking') return <CheckingScreen />;
     if (permStatus === 'blocked') return <BlockedScreen error={permError} onTextOnly={() => setPermStatus('text-only')} />;
     if (isComplete && !recapReady) return <WaitingScreen />;
     if (isComplete) return <RecapScreen sessionRecordId={sessionRecordId} intervieweeName={intervieweeName} intervieweeEmail={intervieweeEmail} />;
 
+    const effectiveIsTextOnly = questionOverride === 'type' || (questionOverride === null && permStatus === 'text-only');
     return (
         <InterviewScreen
             questionIndex={questionIndex}
@@ -924,8 +985,10 @@ export default function App() {
             videoRef={videoRef}
             onSubmit={handleSubmit}
             transitioning={transitioning}
-            isTextOnly={permStatus === 'text-only'}
+            isTextOnly={effectiveIsTextOnly}
             onTextChange={handleTextChange}
+            onToggleMode={handleToggleQuestionMode}
+            canSwitchToSpeak={permStatus === 'granted'}
         />
     );
 }
