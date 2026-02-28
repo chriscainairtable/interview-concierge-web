@@ -1,3 +1,6 @@
+import * as Sentry from '@sentry/node';
+Sentry.init({ dsn: process.env.SENTRY_DSN_SERVER });
+
 const PAT = process.env.AIRTABLE_PAT;
 const BASE_ID = process.env.AIRTABLE_BASE_ID;
 
@@ -68,6 +71,7 @@ export default async function handler(req, res) {
             return res.status(400).json({ error: `Unknown action: ${action}` });
         }
     } catch (err) {
+        Sentry.captureException(err);
         return res.status(500).json({ error: err.message });
     }
 }
