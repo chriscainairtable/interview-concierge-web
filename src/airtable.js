@@ -1,79 +1,31 @@
-const BASE_ID = import.meta.env.VITE_BASE_ID;
-const PAT = import.meta.env.VITE_AIRTABLE_PAT;
-const BASE_URL = `https://api.airtable.com/v0/${BASE_ID}`;
+// All Airtable API calls go through /api/airtable — PAT never touches the browser.
 
-function authHeaders() {
-    return {
-        Authorization: `Bearer ${PAT}`,
-        'Content-Type': 'application/json',
-    };
-}
-
-function tableUrl(tableName) {
-    return `${BASE_URL}/${encodeURIComponent(tableName)}`;
-}
-
-// Create a record. Returns the new record's ID.
-export async function createRecord(tableName, fields) {
-    const res = await fetch(tableUrl(tableName), {
+async function callProxy(body) {
+    const res = await fetch('/api/airtable', {
         method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify({ fields }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
     });
     if (!res.ok) {
         const text = await res.text();
-        throw new Error(`Create failed (${res.status}): ${text}`);
-    }
-    const data = await res.json();
-    return data.id;
-}
-
-// Update a record. Returns the updated record.
-export async function updateRecord(tableName, recordId, fields) {
-    const res = await fetch(`${tableUrl(tableName)}/${recordId}`, {
-        method: 'PATCH',
-        headers: authHeaders(),
-        body: JSON.stringify({ fields }),
-    });
-    if (!res.ok) {
-        const text = await res.text();
-        throw new Error(`Update failed (${res.status}): ${text}`);
+        throw new Error(`Airtable proxy error (${res.status}): ${text}`);
     }
     return res.json();
 }
 
-// List all records (handles pagination). Returns array of { id, fields }.
-export async function listRecords(tableName, options = {}) {
-    const url = new URL(tableUrl(tableName));
+// Create a record. Returns the new record's ID.
+export async function createRecord(table, fields) {
+    const data = await callProxy({ action: 'create', table, fields });
+    return data.id;
+}
 
-    if (options.fields) {
-        options.fields.forEach(f => url.searchParams.append('fields[]', f));
-    }
-    if (options.sort && options.sort.length) {
-        options.sort.forEach((s, i) => {
-            url.searchParams.append(`sort[${i}][field]`, s.field);
-            url.searchParams.append(`sort[${i}][direction]`, s.direction || 'asc');
-        });
-    }
+// Update a record. Returns the updated record.
+export async function updateRecord(table, recordId, fields) {
+    return callProxy({ action: 'update', table, recordId, fields });
+}
 
-    const allRecords = [];
-    let offset = null;
-
-    do {
-        const fetchUrl = new URL(url);
-        if (offset) fetchUrl.searchParams.set('offset', offset);
-
-        const res = await fetch(fetchUrl.toString(), {
-            headers: { Authorization: `Bearer ${PAT}` },
-        });
-        if (!res.ok) {
-            const text = await res.text();
-            throw new Error(`List failed (${res.status}): ${text}`);
-        }
-        const data = await res.json();
-        allRecords.push(...data.records);
-        offset = data.offset || null;
-    } while (offset);
-
-    return allRecords;
+// List all records (pagination handled server-side). Returns array of { id, fields }.
+export async function listRecords(table, options = {}) {
+    const data = await callProxy({ action: 'list', table, listOptions: options });
+    return data.records;
 }
