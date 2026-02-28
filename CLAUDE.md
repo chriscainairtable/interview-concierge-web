@@ -57,7 +57,8 @@ IntroScreen → [camera/mic check] → CheckingScreen
 | Field Type | REST API format |
 |------------|----------------|
 | Single select | `"Active"` (plain string) |
-| Linked records | `["recXXX"]` (array of ID strings — NOT objects) |
+| Linked records (write) | `["recXXX"]` (array of ID strings — NOT objects) |
+| Linked records (read) | `["recXXX"]` plain ID strings — NOT `{ id, name }` objects like the SDK returns. Never do `.id` on a REST-returned linked value — it's already a string. Pattern: `typeof s === 'string' ? s : s.id` |
 | Checkbox | `true` or `false` |
 | AI fields (read) | `{ state, value, isStale }` — extract `.value` before rendering |
 
