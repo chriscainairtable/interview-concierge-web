@@ -59,9 +59,13 @@ IntroScreen → [camera/mic check] → CheckingScreen
 | Single select | `"Active"` (plain string) |
 | Linked records | `["recXXX"]` (array of ID strings — NOT objects) |
 | Checkbox | `true` or `false` |
+| AI fields (read) | `{ state, value, isStale }` — extract `.value` before rendering |
 
 WRONG: `{ 'Session': [{ id: recordId }] }` → INVALID_RECORD_ID error
 RIGHT: `{ 'Session': [recordId] }` — plain string inside the array
+
+WRONG: `{record.fields['Interview Brief']}` → React error #31 (renders an object)
+RIGHT: `{record.fields['Interview Brief']?.value ?? record.fields['Interview Brief'] ?? ''}` — defensive extraction works for both REST and SDK
 
 ## PasscodeGate
 
