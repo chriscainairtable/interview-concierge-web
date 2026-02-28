@@ -535,19 +535,6 @@ function AdminView({ onBack }) {
     );
 }
 
-// ─── Waiting Screen ────────────────────────────────────────────────────────────
-
-function WaitingScreen() {
-    return (
-        <div className="min-h-screen bg-gray-950 flex items-center justify-center">
-            <div className="text-center">
-                <div className="w-10 h-10 border-2 border-gray-700 border-t-white rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-gray-500 text-sm">Just a moment…</p>
-            </div>
-        </div>
-    );
-}
-
 // ─── Audio Level Indicator ─────────────────────────────────────────────────────
 
 function AudioLevelBars({ level, isListening }) {
@@ -724,7 +711,6 @@ export default function App() {
     const [savedAt, setSavedAt] = useState(null);
     const [saveError, setSaveError] = useState(null);
     const [isComplete, setIsComplete] = useState(false);
-    const [recapReady, setRecapReady] = useState(false);
     const [questionOverride, setQuestionOverride] = useState(null); // null | 'speak' | 'type'
 
     const videoRef = useRef(null);
@@ -938,37 +924,11 @@ export default function App() {
         setIsSaving(false);
     }, [isSaving, interimTranscript, questionIndex, sessionRecordId, intervieweeName, intervieweeEmail, permStatus, stream, startListening, stopListening]);
 
-    // ── Poll for recap readiness ───────────────────────────────────────────────
-    useEffect(() => {
-        if (!isComplete || recapReady || !sessionRecordId) return;
-
-        const check = async () => {
-            try {
-                const records = await listRecords(RESPONSES_TABLE, {
-                    fields: ['Session', 'Cleaned Transcript'],
-                });
-                const sessionResponses = records.filter(r =>
-                    Array.isArray(r.fields['Session']) && r.fields['Session'].some(s => s.id === sessionRecordId)
-                );
-                const allReady = sessionResponses.length === QUESTIONS.length &&
-                    sessionResponses.every(r => r.fields['Cleaned Transcript']);
-                if (allReady) setRecapReady(true);
-            } catch (err) {
-                console.error('Recap poll error:', err);
-            }
-        };
-
-        check();
-        const interval = setInterval(check, 3000);
-        return () => clearInterval(interval);
-    }, [isComplete, recapReady, sessionRecordId]);
-
     // ── Render ─────────────────────────────────────────────────────────────────
     if (view === 'admin') return <AdminView onBack={() => setView('interview')} />;
     if (!intervieweeName) return <IntroScreen onStart={(name, email, inputMode) => { if (inputMode === 'type') setPermStatus('text-only'); setIntervieweeName(name); setIntervieweeEmail(email); }} onAdmin={() => setView('admin')} />;
     if (permStatus === 'checking') return <CheckingScreen />;
     if (permStatus === 'blocked') return <BlockedScreen error={permError} onTextOnly={() => setPermStatus('text-only')} />;
-    if (isComplete && !recapReady) return <WaitingScreen />;
     if (isComplete) return <RecapScreen sessionRecordId={sessionRecordId} intervieweeName={intervieweeName} intervieweeEmail={intervieweeEmail} />;
 
     const effectiveIsTextOnly = questionOverride === 'type' || (questionOverride === null && permStatus === 'text-only');
