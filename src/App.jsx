@@ -906,6 +906,7 @@ export default function App() {
                     'Email': intervieweeEmail || '',
                     'Started At': new Date().toISOString(),
                     'Status': 'In Progress',
+                    'User Agent': navigator.userAgent,
                 });
                 setSessionRecordId(currentSessionId);
             }

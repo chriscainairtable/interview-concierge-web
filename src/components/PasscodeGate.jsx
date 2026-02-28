@@ -32,15 +32,19 @@ export default function PasscodeGate({
     const inputRef = useRef(null);
 
     useEffect(() => {
-        if (sessionStorage.getItem('app_authenticated') === 'true') {
-            setAuthenticated(true);
+        try {
+            if (sessionStorage.getItem('app_authenticated') === 'true') {
+                setAuthenticated(true);
+            }
+        } catch {
+            // sessionStorage unavailable (private mode on some mobile browsers) — show gate
         }
     }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
         if (value === passcode) {
-            sessionStorage.setItem('app_authenticated', 'true');
+            try { sessionStorage.setItem('app_authenticated', 'true'); } catch { /* unavailable */ }
             setAuthenticated(true);
         } else {
             setShaking(true);
