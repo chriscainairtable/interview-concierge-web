@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createRecord, updateRecord, listRecords } from './airtable.js';
-import { getFieldValue } from './utils/airtable.js';
+import { getFieldValue, matchesRecordId } from './utils/airtable.js';
 
 const QUESTIONS = [
     "Walk me through the biggest operational headache your team is dealing with right now — what breaks down, and how often?",
@@ -199,10 +199,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                 ]);
                 const sess = sessions.find(r => r.id === sessionRecordId);
                 const myResponses = recs
-                    .filter(r => {
-                        const sess = getFieldValue(r.fields['Session']);
-                        return Array.isArray(sess) && sess.some(s => (typeof s === 'string' ? s : s.id) === sessionRecordId);
-                    })
+                    .filter(r => matchesRecordId(getFieldValue(r.fields['Session']), sessionRecordId))
                     .sort((a, b) => (getFieldValue(a.fields['Question Number']) || 0) - (getFieldValue(b.fields['Question Number']) || 0));
                 setSession(sess);
                 setResponses(myResponses);
@@ -472,10 +469,7 @@ function AdminView({ onBack }) {
                                 'bg-gray-800 text-gray-500';
 
                             const sessionResponses = responseRecords
-                                .filter(r => {
-                                    const linked = getFieldValue(r.fields['Session']);
-                                    return Array.isArray(linked) && linked.some(s => (typeof s === 'string' ? s : s.id) === session.id);
-                                })
+                                .filter(r => matchesRecordId(getFieldValue(r.fields['Session']), session.id))
                                 .sort((a, b) => (getFieldValue(a.fields['Question Number']) || 0) - (getFieldValue(b.fields['Question Number']) || 0));
 
                             return (
