@@ -201,7 +201,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                 const myResponses = recs
                     .filter(r => {
                         const sess = getFieldValue(r.fields['Session']);
-                        return Array.isArray(sess) && sess.some(s => s.id === sessionRecordId);
+                        return Array.isArray(sess) && sess.some(s => (typeof s === 'string' ? s : s.id) === sessionRecordId);
                     })
                     .sort((a, b) => (getFieldValue(a.fields['Question Number']) || 0) - (getFieldValue(b.fields['Question Number']) || 0));
                 setSession(sess);
@@ -474,7 +474,7 @@ function AdminView({ onBack }) {
                             const sessionResponses = responseRecords
                                 .filter(r => {
                                     const linked = getFieldValue(r.fields['Session']);
-                                    return Array.isArray(linked) && linked.some(s => s.id === session.id);
+                                    return Array.isArray(linked) && linked.some(s => (typeof s === 'string' ? s : s.id) === session.id);
                                 })
                                 .sort((a, b) => (getFieldValue(a.fields['Question Number']) || 0) - (getFieldValue(b.fields['Question Number']) || 0));
 
