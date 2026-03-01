@@ -64,6 +64,9 @@ IntroScreen → [camera/mic check] → CheckingScreen
 WRONG: `{ 'Session': [{ id: recordId }] }` → INVALID_RECORD_ID error
 RIGHT: `{ 'Session': [recordId] }` — plain string inside the array
 
+WRONG: `r.fields['Session']?.some(s => s.id === id)` → never matches (s is a string, not {id})
+RIGHT: `r.fields['Session']?.some(s => (typeof s === 'string' ? s : s.id) === id)` — handles both formats
+
 WRONG: `{record.fields['Interview Brief']}` → React error #31 (renders an object)
 WRONG: `record.fields['Interview Brief']?.value ?? record.fields['Interview Brief']` → React error #31 when `.value` is null (falls back to the raw object)
 RIGHT: `getFieldValue(record.fields['Interview Brief'])` from `src/utils/airtable.js` — handles all cases safely
@@ -95,6 +98,7 @@ App is wrapped with `PasscodeGate` in `main.jsx`. Default passcode: `"airtable"`
 
 ## Current State
 
+- [2026-03-01] Released: Fix RecapScreen response cards not showing (linked record IDs are plain strings in REST API); add matchesRecordId utility with pre-commit enforcement
 - ThankYouScreen: green checkmark, "You're all set, [name].", "We'll be in touch soon." — no buttons
 - IntroScreen tagline: dynamically reflects Speak/Type mode selection
 - Per-question mode override (switch speak↔type mid-interview)
