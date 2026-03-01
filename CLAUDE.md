@@ -65,7 +65,29 @@ WRONG: `{ 'Session': [{ id: recordId }] }` → INVALID_RECORD_ID error
 RIGHT: `{ 'Session': [recordId] }` — plain string inside the array
 
 WRONG: `{record.fields['Interview Brief']}` → React error #31 (renders an object)
-RIGHT: `{record.fields['Interview Brief']?.value ?? record.fields['Interview Brief'] ?? ''}` — defensive extraction works for both REST and SDK
+WRONG: `record.fields['Interview Brief']?.value ?? record.fields['Interview Brief']` → React error #31 when `.value` is null (falls back to the raw object)
+RIGHT: `getFieldValue(record.fields['Interview Brief'])` from `src/utils/airtable.js` — handles all cases safely
+
+## Airtable Field Access — Hard Rule
+
+**NEVER access `record.fields['X']` directly in JSX or conditions.**
+
+Always use helpers from `src/utils/airtable.js`:
+
+| Helper | Use for |
+|--------|---------|
+| `getFieldValue(field)` | Extracting any field value for rendering or logic |
+| `isFieldReady(field)` | Checking if an AI field has generated a value |
+| `isFieldGenerating(field)` | Checking if an AI field is still computing |
+
+A pre-commit hook (`.git/hooks/pre-commit`) enforces this — any commit with a raw `fields['` access not wrapped in `getFieldValue` will fail. Run the grep check manually:
+
+```bash
+grep -n "fields\['" src/App.jsx | grep -v getFieldValue
+# Must be zero results
+```
+
+**Root cause of React error #31:** AI fields return `{state, value, isStale}` instead of a plain string. The `?.value ?? field` fallback pattern renders the raw object when `value` is null (field not yet computed). `getFieldValue()` handles this safely.
 
 ## PasscodeGate
 

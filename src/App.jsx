@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createRecord, updateRecord, listRecords } from './airtable.js';
+import { getFieldValue } from './utils/airtable.js';
 
 const QUESTIONS = [
     "Walk me through the biggest operational headache your team is dealing with right now — what breaks down, and how often?",
@@ -10,13 +11,6 @@ const QUESTIONS = [
 
 const SESSIONS_TABLE = 'Interview Sessions';
 const RESPONSES_TABLE = 'Interview Responses';
-
-// AI fields return {state, value, isStale} — extract the string safely
-const getAIValue = (field) => {
-    if (!field) return null;
-    if (typeof field === 'object') return field.value || null;
-    return field;
-};
 
 // ─── Intro Screen ─────────────────────────────────────────────────────────────
 
@@ -205,8 +199,11 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                 ]);
                 const sess = sessions.find(r => r.id === sessionRecordId);
                 const myResponses = recs
-                    .filter(r => Array.isArray(r.fields['Session']) && r.fields['Session'].some(s => s.id === sessionRecordId))
-                    .sort((a, b) => (a.fields['Question Number'] || 0) - (b.fields['Question Number'] || 0));
+                    .filter(r => {
+                        const sess = getFieldValue(r.fields['Session']);
+                        return Array.isArray(sess) && sess.some(s => s.id === sessionRecordId);
+                    })
+                    .sort((a, b) => (getFieldValue(a.fields['Question Number']) || 0) - (getFieldValue(b.fields['Question Number']) || 0));
                 setSession(sess);
                 setResponses(myResponses);
             } catch (err) {
@@ -219,7 +216,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
         return () => clearInterval(interval);
     }, [sessionRecordId]);
 
-    const interviewBrief = getAIValue(session?.fields['Interview Brief']) ?? '';
+    const interviewBrief = getFieldValue(session?.fields['Interview Brief']) ?? '';
 
     const [briefVisible, setBriefVisible] = useState(false);
     useEffect(() => {
@@ -291,10 +288,10 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                     <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-3">What you shared</p>
                     <div className="space-y-3">
                         {responses.map((r, i) => {
-                            const cleaned = getAIValue(r.fields['Cleaned Transcript']) ?? '';
+                            const cleaned = getFieldValue(r.fields['Cleaned Transcript']) ?? '';
                             return (
                                 <div key={r.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-                                    <p className="text-gray-600 text-sm mb-2">Q{i + 1} — {r.fields['Question Text'] || ''}</p>
+                                    <p className="text-gray-600 text-sm mb-2">Q{i + 1} — {getFieldValue(r.fields['Question Text']) || ''}</p>
                                     {cleaned ? (
                                         <p className="text-gray-200 text-lg leading-relaxed">{cleaned}</p>
                                     ) : (
@@ -448,11 +445,11 @@ function AdminView({ onBack }) {
                 ) : (
                     <div className="space-y-3 max-w-2xl mx-auto">
                         {sessions.map(session => {
-                            const name = session.fields['Interviewee Name'] || '';
-                            const email = session.fields['Email'] || '';
-                            const statusName = session.fields['Status'] || '—';
-                            const brief = getAIValue(session.fields['Interview Brief']) ?? '';
-                            const startedAt = session.fields['Started At'] || null;
+                            const name = getFieldValue(session.fields['Interviewee Name']) || '';
+                            const email = getFieldValue(session.fields['Email']) || '';
+                            const statusName = getFieldValue(session.fields['Status']) || '—';
+                            const brief = getFieldValue(session.fields['Interview Brief']) ?? '';
+                            const startedAt = getFieldValue(session.fields['Started At']) || null;
                             const expanded = expandedId === session.id;
 
                             const isVisuallyAbandoned = statusName === 'In Progress' &&
@@ -476,10 +473,10 @@ function AdminView({ onBack }) {
 
                             const sessionResponses = responseRecords
                                 .filter(r => {
-                                    const linked = r.fields['Session'];
+                                    const linked = getFieldValue(r.fields['Session']);
                                     return Array.isArray(linked) && linked.some(s => s.id === session.id);
                                 })
-                                .sort((a, b) => (a.fields['Question Number'] || 0) - (b.fields['Question Number'] || 0));
+                                .sort((a, b) => (getFieldValue(a.fields['Question Number']) || 0) - (getFieldValue(b.fields['Question Number']) || 0));
 
                             return (
                                 <div key={session.id} className={`bg-gray-900 border border-gray-800 rounded-xl overflow-hidden transition-opacity ${isAbandoned ? 'opacity-50' : 'opacity-100'}`}>
@@ -535,8 +532,8 @@ function AdminView({ onBack }) {
                                                     <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-2">Responses</p>
                                                     <div className="space-y-2">
                                                         {sessionResponses.map((r, i) => {
-                                                            const summary = getAIValue(r.fields['One Line Summary']) ?? '';
-                                                            const sentiment = getAIValue(r.fields['Sentiment Signal']) ?? '';
+                                                            const summary = getFieldValue(r.fields['One Line Summary']) ?? '';
+                                                            const sentiment = getFieldValue(r.fields['Sentiment Signal']) ?? '';
                                                             return (
                                                                 <div key={r.id} className="bg-gray-800/60 rounded-lg p-3">
                                                                     <p className="text-gray-500 text-sm mb-1.5">Q{i + 1}</p>
