@@ -5,7 +5,7 @@
 //     <App />
 //   </PasscodeGate>
 
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const SHAKE_KEYFRAME = `
 @keyframes passcode-shake {

@@ -96,6 +96,10 @@ grep -n "fields\['" src/App.jsx | grep -v getFieldValue
 
 App is wrapped with `PasscodeGate` in `main.jsx`. Default passcode: `"airtable"`. Checks `sessionStorage` — no re-prompt within the same browser session. Component lives at `src/components/PasscodeGate.jsx` (copied from `~/.claude/templates/PasscodeGate.jsx`).
 
+## Known Lint Warnings
+
+- [2026-02-28] `react-hooks/exhaustive-deps` — missing `permStatus` in useEffect deps (App.jsx:763) — pre-existing, not introduced by ESLint setup
+
 ## Current State
 
 - [2026-03-01] Released: Fix RecapScreen response cards not showing (linked record IDs are plain strings in REST API); add matchesRecordId utility with pre-commit enforcement
