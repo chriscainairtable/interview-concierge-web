@@ -11,6 +11,13 @@ const QUESTIONS = [
 const SESSIONS_TABLE = 'Interview Sessions';
 const RESPONSES_TABLE = 'Interview Responses';
 
+// AI fields return {state, value, isStale} — extract the string safely
+const getAIValue = (field) => {
+    if (!field) return null;
+    if (typeof field === 'object') return field.value || null;
+    return field;
+};
+
 // ─── Intro Screen ─────────────────────────────────────────────────────────────
 
 function IntroScreen({ onStart, onAdmin }) {
@@ -212,7 +219,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
         return () => clearInterval(interval);
     }, [sessionRecordId]);
 
-    const interviewBrief = session?.fields['Interview Brief']?.value ?? session?.fields['Interview Brief'] ?? '';
+    const interviewBrief = getAIValue(session?.fields['Interview Brief']) ?? '';
 
     const [briefVisible, setBriefVisible] = useState(false);
     useEffect(() => {
@@ -284,7 +291,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                     <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-3">What you shared</p>
                     <div className="space-y-3">
                         {responses.map((r, i) => {
-                            const cleaned = r.fields['Cleaned Transcript']?.value ?? r.fields['Cleaned Transcript'] ?? '';
+                            const cleaned = getAIValue(r.fields['Cleaned Transcript']) ?? '';
                             return (
                                 <div key={r.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
                                     <p className="text-gray-600 text-sm mb-2">Q{i + 1} — {r.fields['Question Text'] || ''}</p>
@@ -444,7 +451,7 @@ function AdminView({ onBack }) {
                             const name = session.fields['Interviewee Name'] || '';
                             const email = session.fields['Email'] || '';
                             const statusName = session.fields['Status'] || '—';
-                            const brief = session.fields['Interview Brief']?.value ?? session.fields['Interview Brief'] ?? '';
+                            const brief = getAIValue(session.fields['Interview Brief']) ?? '';
                             const startedAt = session.fields['Started At'] || null;
                             const expanded = expandedId === session.id;
 
@@ -528,8 +535,8 @@ function AdminView({ onBack }) {
                                                     <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-2">Responses</p>
                                                     <div className="space-y-2">
                                                         {sessionResponses.map((r, i) => {
-                                                            const summary = r.fields['One Line Summary']?.value ?? r.fields['One Line Summary'] ?? '';
-                                                            const sentiment = r.fields['Sentiment Signal']?.value ?? r.fields['Sentiment Signal'] ?? '';
+                                                            const summary = getAIValue(r.fields['One Line Summary']) ?? '';
+                                                            const sentiment = getAIValue(r.fields['Sentiment Signal']) ?? '';
                                                             return (
                                                                 <div key={r.id} className="bg-gray-800/60 rounded-lg p-3">
                                                                     <p className="text-gray-500 text-sm mb-1.5">Q{i + 1}</p>
