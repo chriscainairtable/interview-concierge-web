@@ -28,7 +28,7 @@ function IntroScreen({ onStart, onAdmin }) {
         <div className="min-h-screen bg-gray-950 flex items-center justify-center p-8 relative">
             <button
                 onClick={onAdmin}
-                className="absolute top-4 right-4 text-gray-700 hover:text-gray-400 text-xs transition-colors"
+                className="absolute top-4 right-4 text-gray-700 hover:text-gray-400 text-sm transition-colors"
             >
                 View sessions
             </button>
@@ -43,9 +43,9 @@ function IntroScreen({ onStart, onAdmin }) {
                 </div>
 
                 {/* Heading */}
-                <p className="text-gray-600 text-xs font-mono uppercase tracking-widest mb-2">Discovery Interview</p>
-                <h1 className="text-white text-3xl font-semibold mb-3 leading-snug">Interview Concierge</h1>
-                <p className="text-gray-500 text-base leading-relaxed mb-6">
+                <p className="text-gray-600 text-sm font-mono uppercase tracking-widest mb-2">Discovery Interview</p>
+                <h1 className="text-white text-4xl font-semibold mb-3 leading-snug">Interview Concierge</h1>
+                <p className="text-gray-500 text-lg leading-relaxed mb-6">
                     {inputMode === 'speak'
                         ? '4 short questions. Speak your answers — your responses are captured and summarized automatically.'
                         : '4 short questions. Type your answers — your responses are captured and summarized automatically.'}
@@ -56,9 +56,9 @@ function IntroScreen({ onStart, onAdmin }) {
                     <button
                         type="button"
                         onClick={() => setInputMode('speak')}
-                        className={`flex-1 py-2.5 rounded-full text-sm font-medium transition-all ${
+                        className={`flex-1 py-2.5 rounded-full text-base font-medium transition-all ${
                             inputMode === 'speak'
-                                ? 'bg-white text-gray-950'
+                                ? 'bg-[#0071CE] text-white'
                                 : 'bg-gray-900 text-gray-500 border border-gray-800 hover:text-gray-300'
                         }`}
                     >
@@ -67,9 +67,9 @@ function IntroScreen({ onStart, onAdmin }) {
                     <button
                         type="button"
                         onClick={() => setInputMode('type')}
-                        className={`flex-1 py-2.5 rounded-full text-sm font-medium transition-all ${
+                        className={`flex-1 py-2.5 rounded-full text-base font-medium transition-all ${
                             inputMode === 'type'
-                                ? 'bg-white text-gray-950'
+                                ? 'bg-[#0071CE] text-white'
                                 : 'bg-gray-900 text-gray-500 border border-gray-800 hover:text-gray-300'
                         }`}
                     >
@@ -80,32 +80,32 @@ function IntroScreen({ onStart, onAdmin }) {
                 {/* Form */}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
-                        <p className="text-gray-400 text-base mb-2">What&apos;s your name?</p>
+                        <p className="text-gray-400 text-lg mb-2">What&apos;s your name?</p>
                         <input
                             type="text"
                             value={name}
                             onChange={e => setName(e.target.value)}
                             placeholder="First name is fine"
                             autoFocus
-                            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-base placeholder-gray-600 outline-none focus:border-gray-500"
+                            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-lg placeholder-gray-600 outline-none focus:border-gray-500"
                         />
                     </div>
                     <div className="mb-6">
-                        <p className="text-gray-400 text-base mb-2">Your email address</p>
+                        <p className="text-gray-400 text-lg mb-2">Your email address</p>
                         <input
                             type="email"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             placeholder="you@company.com"
-                            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-base placeholder-gray-600 outline-none focus:border-gray-500"
+                            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-lg placeholder-gray-600 outline-none focus:border-gray-500"
                         />
                     </div>
                     <button
                         type="submit"
                         disabled={!isValid}
-                        className={`w-full py-3 rounded-lg text-base font-medium transition-all ${
+                        className={`w-full py-3 rounded-lg text-lg font-medium transition-all ${
                             isValid
-                                ? 'bg-white text-gray-950 hover:bg-gray-100 cursor-pointer'
+                                ? 'bg-[#0071CE] text-white hover:bg-[#005fa3] cursor-pointer'
                                 : 'bg-gray-800 text-gray-600 cursor-not-allowed'
                         }`}
                     >
@@ -124,7 +124,7 @@ function CheckingScreen() {
         <div className="min-h-screen bg-gray-950 flex items-center justify-center">
             <div className="text-center">
                 <div className="w-10 h-10 border-2 border-gray-700 border-t-white rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-gray-500 text-base">Requesting camera &amp; microphone…</p>
+                <p className="text-gray-500 text-lg">Requesting camera &amp; microphone…</p>
             </div>
         </div>
     );
@@ -141,17 +141,17 @@ function BlockedScreen({ error, onTextOnly }) {
                         <line x1="9" y1="9" x2="15" y2="15" />
                     </svg>
                 </div>
-                <h2 className="text-white text-xl font-semibold mb-2">Camera &amp; Mic Blocked</h2>
-                <p className="text-gray-500 text-base mb-6 leading-relaxed">
+                <h2 className="text-white text-2xl font-semibold mb-2">Camera &amp; Mic Blocked</h2>
+                <p className="text-gray-500 text-lg mb-6 leading-relaxed">
                     This app needs camera and microphone access. Grant permissions in your browser, then reload.
                 </p>
                 <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 text-left mb-5">
-                    <p className="text-gray-600 text-xs font-mono uppercase tracking-wider mb-2">Error</p>
-                    <p className="text-red-400 text-sm font-mono break-all">{error || 'Unknown error'}</p>
+                    <p className="text-gray-600 text-sm font-mono uppercase tracking-wider mb-2">Error</p>
+                    <p className="text-red-400 text-base font-mono break-all">{error || 'Unknown error'}</p>
                 </div>
                 <button
                     onClick={onTextOnly}
-                    className="text-gray-500 text-sm hover:text-gray-300 transition-colors"
+                    className="text-gray-500 text-base hover:text-gray-300 transition-colors"
                 >
                     Continue with typed answers instead →
                 </button>
@@ -171,8 +171,8 @@ function ThankYouScreen({ name }) {
                         <polyline points="20 6 9 17 4 12" />
                     </svg>
                 </div>
-                <h1 className="text-white text-2xl font-semibold mb-3">You&apos;re all set, {name}.</h1>
-                <p className="text-gray-500 text-base">We&apos;ll be in touch soon.</p>
+                <h1 className="text-white text-3xl font-semibold mb-3">You&apos;re all set, {name}.</h1>
+                <p className="text-gray-500 text-lg">We&apos;ll be in touch soon.</p>
             </div>
         </div>
     );
@@ -257,23 +257,23 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                         </svg>
                     </div>
                     <div>
-                        <p className="text-gray-500 text-xs font-mono uppercase tracking-widest">Interview Complete</p>
-                        <h1 className="text-white text-2xl font-semibold">Thanks, {intervieweeName}.</h1>
+                        <p className="text-gray-500 text-sm font-mono uppercase tracking-widest">Interview Complete</p>
+                        <h1 className="text-white text-3xl font-semibold">Thanks, {intervieweeName}.</h1>
                     </div>
                 </div>
 
                 {/* What we heard */}
                 <div className="mb-6">
-                    <p className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-3">What we heard</p>
+                    <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-3">What we heard</p>
                     <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
                         {interviewBrief ? (
-                            <p className={`text-gray-200 text-base leading-relaxed transition-opacity duration-500 ${briefVisible ? 'opacity-100' : 'opacity-0'}`}>
+                            <p className={`text-gray-200 text-lg leading-relaxed transition-opacity duration-500 ${briefVisible ? 'opacity-100' : 'opacity-0'}`}>
                                 {interviewBrief}
                             </p>
                         ) : (
                             <div className="flex items-center gap-2.5">
                                 <div className="w-3.5 h-3.5 border border-gray-700 border-t-gray-400 rounded-full animate-spin flex-shrink-0" />
-                                <p className="text-gray-600 text-sm">Almost ready…</p>
+                                <p className="text-gray-600 text-base">Almost ready…</p>
                             </div>
                         )}
                     </div>
@@ -281,19 +281,19 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
 
                 {/* Per-answer cleaned transcripts */}
                 <div className="mb-8">
-                    <p className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-3">What you shared</p>
+                    <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-3">What you shared</p>
                     <div className="space-y-3">
                         {responses.map((r, i) => {
                             const cleaned = r.fields['Cleaned Transcript']?.value ?? r.fields['Cleaned Transcript'] ?? '';
                             return (
                                 <div key={r.id} className="bg-gray-900 border border-gray-800 rounded-xl p-4">
-                                    <p className="text-gray-600 text-xs mb-2">Q{i + 1} — {r.fields['Question Text'] || ''}</p>
+                                    <p className="text-gray-600 text-sm mb-2">Q{i + 1} — {r.fields['Question Text'] || ''}</p>
                                     {cleaned ? (
-                                        <p className="text-gray-200 text-base leading-relaxed">{cleaned}</p>
+                                        <p className="text-gray-200 text-lg leading-relaxed">{cleaned}</p>
                                     ) : (
                                         <div className="flex items-center gap-2">
                                             <div className="w-3 h-3 border border-gray-700 border-t-gray-500 rounded-full animate-spin flex-shrink-0" />
-                                            <p className="text-gray-600 text-xs">Just a moment…</p>
+                                            <p className="text-gray-600 text-sm">Just a moment…</p>
                                         </div>
                                     )}
                                 </div>
@@ -305,18 +305,18 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                 {/* Follow-up */}
                 {sendStatus === 'sent' ? (
                     <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                        <div className="flex items-center gap-2 text-green-400 text-base mb-2">
+                        <div className="flex items-center gap-2 text-green-400 text-lg mb-2">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                                 <polyline points="20 6 9 17 4 12" />
                             </svg>
                             On its way
                         </div>
-                        <p className="text-gray-500 text-base">Someone from our team will follow up with you shortly.</p>
+                        <p className="text-gray-500 text-lg">Someone from our team will follow up with you shortly.</p>
                     </div>
                 ) : (
                     <div className="bg-gray-900 border border-gray-800 rounded-xl p-5">
-                        <p className="text-gray-400 text-base font-medium mb-1">Want a copy of this conversation?</p>
-                        <p className="text-gray-600 text-sm mb-4 leading-relaxed">We&apos;ll send you a short note with what you shared today.</p>
+                        <p className="text-gray-400 text-lg font-medium mb-1">Want a copy of this conversation?</p>
+                        <p className="text-gray-600 text-base mb-4 leading-relaxed">We&apos;ll send you a short note with what you shared today.</p>
 
                         <label className="flex items-center gap-3 cursor-pointer mb-4">
                             <input
@@ -325,7 +325,7 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                                 onChange={e => setSendToSelf(e.target.checked)}
                                 className="w-4 h-4 accent-white cursor-pointer"
                             />
-                            <span className="text-gray-300 text-base">Send to <span className="text-white">{intervieweeEmail}</span></span>
+                            <span className="text-gray-300 text-lg">Send to <span className="text-white">{intervieweeEmail}</span></span>
                         </label>
 
                         <div className="mb-4">
@@ -334,30 +334,30 @@ function RecapScreen({ sessionRecordId, intervieweeName, intervieweeEmail, onTha
                                 onChange={e => setOtherEmails(e.target.value)}
                                 placeholder="Anyone else who should get a copy? (comma-separated)"
                                 rows={2}
-                                className="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-base placeholder-gray-600 outline-none focus:border-gray-500 resize-none"
+                                className="w-full bg-gray-950 border border-gray-700 rounded-lg px-3 py-2.5 text-white text-lg placeholder-gray-600 outline-none focus:border-gray-500 resize-none"
                             />
                         </div>
 
                         {!interviewBrief ? (
                             <div className="flex items-center gap-2.5">
                                 <div className="w-3.5 h-3.5 border border-gray-700 border-t-gray-400 rounded-full animate-spin flex-shrink-0" />
-                                <p className="text-gray-600 text-sm">Almost ready…</p>
+                                <p className="text-gray-600 text-base">Almost ready…</p>
                             </div>
                         ) : (
                             <>
                                 <button
                                     onClick={handleSend}
                                     disabled={sendStatus === 'sending' || (!sendToSelf && !otherEmails.trim())}
-                                    className={`w-full py-2.5 rounded-lg text-base font-medium transition-all ${
+                                    className={`w-full py-2.5 rounded-lg text-lg font-medium transition-all ${
                                         sendStatus === 'sending' || (!sendToSelf && !otherEmails.trim())
                                             ? 'bg-gray-800 text-gray-600 cursor-not-allowed'
-                                            : 'bg-white text-gray-950 hover:bg-gray-100 cursor-pointer'
+                                            : 'bg-[#0071CE] text-white hover:bg-[#005fa3] cursor-pointer'
                                     }`}
                                 >
                                     {sendStatus === 'sending' ? 'Sending…' : 'Send it →'}
                                 </button>
                                 {sendStatus === 'error' && sendError && (
-                                    <p className="text-red-400 text-xs font-mono mt-2 break-all">{sendError}</p>
+                                    <p className="text-red-400 text-sm font-mono mt-2 break-all">{sendError}</p>
                                 )}
                             </>
                         )}
@@ -418,12 +418,12 @@ function AdminView({ onBack }) {
             {/* Header */}
             <div className="border-b border-gray-800 px-6 py-4 flex items-center justify-between flex-shrink-0">
                 <div>
-                    <p className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-0.5">Interview Concierge</p>
-                    <h1 className="text-white text-lg font-semibold">All Sessions</h1>
+                    <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-0.5">Interview Concierge</p>
+                    <h1 className="text-white text-xl font-semibold">All Sessions</h1>
                 </div>
                 <button
                     onClick={onBack}
-                    className="text-gray-500 text-sm hover:text-white transition-colors"
+                    className="text-gray-500 text-base hover:text-white transition-colors"
                 >
                     ← New Interview
                 </button>
@@ -434,10 +434,10 @@ function AdminView({ onBack }) {
                 {loading ? (
                     <div className="flex items-center justify-center py-16 gap-2">
                         <div className="w-4 h-4 border border-gray-700 border-t-gray-400 rounded-full animate-spin" />
-                        <p className="text-gray-600 text-sm">Loading…</p>
+                        <p className="text-gray-600 text-base">Loading…</p>
                     </div>
                 ) : sessions.length === 0 ? (
-                    <p className="text-gray-600 text-sm text-center py-16">No sessions yet</p>
+                    <p className="text-gray-600 text-base text-center py-16">No sessions yet</p>
                 ) : (
                     <div className="space-y-3 max-w-2xl mx-auto">
                         {sessions.map(session => {
@@ -482,19 +482,19 @@ function AdminView({ onBack }) {
                                     >
                                         <div>
                                             <p className="text-white font-medium">{name || 'Unnamed'}</p>
-                                            <p className="text-gray-500 text-xs mt-0.5">{email}</p>
+                                            <p className="text-gray-500 text-sm mt-0.5">{email}</p>
                                             {formattedDate && (
-                                                <p className="text-gray-600 text-xs mt-0.5">{formattedDate}</p>
+                                                <p className="text-gray-600 text-sm mt-0.5">{formattedDate}</p>
                                             )}
                                         </div>
                                         <div className="flex items-center gap-3">
-                                            <span className={`text-xs px-2 py-0.5 rounded-full ${badgeClass}`}>
+                                            <span className={`text-sm px-2 py-0.5 rounded-full ${badgeClass}`}>
                                                 {badgeName}
                                             </span>
                                             {canAbandon && (
                                                 <button
                                                     onClick={e => { e.stopPropagation(); handleAbandon(session.id); }}
-                                                    className="text-xs text-gray-600 hover:text-red-400 transition-colors whitespace-nowrap"
+                                                    className="text-sm text-gray-600 hover:text-red-400 transition-colors whitespace-nowrap"
                                                 >
                                                     Abandon
                                                 </button>
@@ -513,33 +513,33 @@ function AdminView({ onBack }) {
                                         <div className="border-t border-gray-800 px-5 py-4 space-y-4">
                                             {brief ? (
                                                 <div>
-                                                    <p className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-2">AI Summary</p>
-                                                    <p className="text-gray-200 text-sm leading-relaxed">{brief}</p>
+                                                    <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-2">AI Summary</p>
+                                                    <p className="text-gray-200 text-base leading-relaxed">{brief}</p>
                                                 </div>
                                             ) : (
                                                 <div className="flex items-center gap-2">
                                                     <div className="w-3 h-3 border border-gray-700 border-t-gray-500 rounded-full animate-spin flex-shrink-0" />
-                                                    <p className="text-gray-600 text-xs">Generating summary…</p>
+                                                    <p className="text-gray-600 text-sm">Generating summary…</p>
                                                 </div>
                                             )}
 
                                             {sessionResponses.length > 0 && (
                                                 <div>
-                                                    <p className="text-gray-500 text-xs font-mono uppercase tracking-widest mb-2">Responses</p>
+                                                    <p className="text-gray-500 text-sm font-mono uppercase tracking-widest mb-2">Responses</p>
                                                     <div className="space-y-2">
                                                         {sessionResponses.map((r, i) => {
                                                             const summary = r.fields['One Line Summary']?.value ?? r.fields['One Line Summary'] ?? '';
                                                             const sentiment = r.fields['Sentiment Signal']?.value ?? r.fields['Sentiment Signal'] ?? '';
                                                             return (
                                                                 <div key={r.id} className="bg-gray-800/60 rounded-lg p-3">
-                                                                    <p className="text-gray-500 text-xs mb-1.5">Q{i + 1}</p>
+                                                                    <p className="text-gray-500 text-sm mb-1.5">Q{i + 1}</p>
                                                                     {summary ? (
-                                                                        <p className="text-gray-200 text-sm leading-relaxed">{summary}</p>
+                                                                        <p className="text-gray-200 text-base leading-relaxed">{summary}</p>
                                                                     ) : (
-                                                                        <p className="text-gray-600 text-xs italic">Generating…</p>
+                                                                        <p className="text-gray-600 text-sm italic">Generating…</p>
                                                                     )}
                                                                     {sentiment && (
-                                                                        <p className="text-gray-500 text-xs mt-1.5 italic">{sentiment}</p>
+                                                                        <p className="text-gray-500 text-sm mt-1.5 italic">{sentiment}</p>
                                                                     )}
                                                                 </div>
                                                             );
@@ -571,7 +571,7 @@ function AudioLevelBars({ level, isListening }) {
                 return (
                     <div
                         key={i}
-                        className={`w-1 rounded-full transition-colors duration-75 ${active ? 'bg-green-400' : 'bg-gray-700'}`}
+                        className={`w-1 rounded-full transition-colors duration-75 ${active ? 'bg-[#0071CE]' : 'bg-gray-700'}`}
                         style={{ height: `${30 + (i / BAR_COUNT) * 70}%` }}
                     />
                 );
@@ -615,8 +615,8 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
                         <div
                             key={i}
                             className={`h-1 rounded-full transition-all duration-500 ${
-                                i < questionIndex ? 'bg-green-400' :
-                                i === questionIndex ? 'bg-white' :
+                                i < questionIndex ? 'bg-[#0071CE]' :
+                                i === questionIndex ? 'bg-[#0071CE]' :
                                 'bg-gray-800'
                             }`}
                             style={{ width: '28px' }}
@@ -627,11 +627,11 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
 
             {/* Main content — fades between questions */}
             <div className={`flex-1 flex flex-col justify-center px-6 pb-6 max-w-lg mx-auto w-full transition-opacity duration-200 ${transitioning ? 'opacity-0' : 'opacity-100'}`}>
-                <p className="text-gray-600 text-xs font-mono tracking-widest uppercase mb-4">
+                <p className="text-gray-600 text-sm font-mono tracking-widest uppercase mb-4">
                     Question {questionIndex + 1} of {QUESTIONS.length}
                 </p>
 
-                <h1 className="text-white text-2xl font-semibold leading-snug mb-6">
+                <h1 className="text-white text-3xl font-semibold leading-snug mb-6">
                     {QUESTIONS[questionIndex]}
                 </h1>
 
@@ -643,15 +643,15 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
                             onChange={e => onTextChange(e.target.value)}
                             placeholder="Type your answer here…"
                             autoFocus
-                            className="w-full bg-transparent text-gray-200 text-base leading-relaxed outline-none resize-none min-h-[80px] placeholder-gray-600"
+                            className="w-full bg-transparent text-gray-200 text-lg leading-relaxed outline-none resize-none min-h-[80px] placeholder-gray-600"
                         />
                     ) : hasText ? (
-                        <p className="text-gray-200 text-base leading-relaxed">
+                        <p className="text-gray-200 text-lg leading-relaxed">
                             {transcript}
                             <span className="text-gray-500">{interimTranscript}</span>
                         </p>
                     ) : (
-                        <p className="text-gray-600 text-base">
+                        <p className="text-gray-600 text-lg">
                             {!SpeechAPI
                                 ? '⚠ Speech recognition requires Chrome or Edge'
                                 : isListening
@@ -664,11 +664,11 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
                 {/* Per-question mode toggle */}
                 <div className="flex justify-end mt-2 mb-1">
                     {!isTextOnly ? (
-                        <button type="button" onClick={onToggleMode} className="text-gray-600 text-xs hover:text-gray-400 transition-colors">
+                        <button type="button" onClick={onToggleMode} className="text-gray-600 text-sm hover:text-gray-400 transition-colors">
                             ⌨️ Type instead
                         </button>
                     ) : canSwitchToSpeak ? (
-                        <button type="button" onClick={onToggleMode} className="text-gray-600 text-xs hover:text-gray-400 transition-colors">
+                        <button type="button" onClick={onToggleMode} className="text-gray-600 text-sm hover:text-gray-400 transition-colors">
                             🎤 Speak instead
                         </button>
                     ) : null}
@@ -677,7 +677,7 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
                 {/* Error display */}
                 {saveError && (
                     <div className="bg-red-500/10 border border-red-500/20 rounded-lg px-4 py-3 mb-4">
-                        <p className="text-red-400 text-xs font-mono break-all">{saveError}</p>
+                        <p className="text-red-400 text-sm font-mono break-all">{saveError}</p>
                     </div>
                 )}
 
@@ -695,14 +695,14 @@ function InterviewScreen({ questionIndex, transcript, interimTranscript, audioLe
 
                     <div className="flex items-center gap-3">
                         {justSaved && !isSaving && (
-                            <span className="text-green-400 text-base">Saved ✓</span>
+                            <span className="text-green-400 text-lg">Saved ✓</span>
                         )}
                         <button
                             onClick={onSubmit}
                             disabled={!hasText || isSaving || hasActiveTranscription}
-                            className={`px-4 py-2.5 rounded-lg text-base font-medium transition-all ${
+                            className={`px-4 py-2.5 rounded-lg text-lg font-medium transition-all ${
                                 hasText && !isSaving && !hasActiveTranscription
-                                    ? 'bg-white text-gray-950 hover:bg-gray-100 cursor-pointer'
+                                    ? 'bg-[#0071CE] text-white hover:bg-[#005fa3] cursor-pointer'
                                     : 'bg-gray-800 text-gray-600 cursor-not-allowed'
                             }`}
                         >
