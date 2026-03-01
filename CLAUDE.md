@@ -92,6 +92,22 @@ grep -n "fields\['" src/App.jsx | grep -v getFieldValue
 
 **Root cause of React error #31:** AI fields return `{state, value, isStale}` instead of a plain string. The `?.value ?? field` fallback pattern renders the raw object when `value` is null (field not yet computed). `getFieldValue()` handles this safely.
 
+## React Import Rule
+
+**Never import React explicitly in this project.**
+
+`@vitejs/plugin-react` handles the JSX transform — an explicit `import React from 'react'` is unused and will fail lint with `no-unused-vars`.
+
+```js
+// ✅ correct for Vite web apps
+import { useState, useEffect } from 'react';
+
+// ❌ wrong — triggers no-unused-vars lint error
+import React, { useState, useEffect } from 'react';
+```
+
+This is the opposite of Airtable extensions, which require `import React from 'react'` explicitly (classic JSX transform). Do not apply extension rules here.
+
 ## PasscodeGate
 
 App is wrapped with `PasscodeGate` in `main.jsx`. Default passcode: `"airtable"`. Checks `sessionStorage` — no re-prompt within the same browser session. Component lives at `src/components/PasscodeGate.jsx` (copied from `~/.claude/templates/PasscodeGate.jsx`).
