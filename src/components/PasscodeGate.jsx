@@ -61,7 +61,7 @@ export default function PasscodeGate({
             <style>{SHAKE_KEYFRAME}</style>
             <div style={{
                 minHeight: '100vh',
-                background: '#030712',
+                background: '#0071CE',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -73,7 +73,7 @@ export default function PasscodeGate({
                     )}
                     {appName && (
                         <p style={{
-                            color: '#6b7280',
+                            color: 'rgba(255,255,255,0.7)',
                             fontSize: '0.75rem',
                             fontFamily: 'ui-monospace, monospace',
                             textTransform: 'uppercase',
@@ -96,11 +96,11 @@ export default function PasscodeGate({
                                 display: 'block',
                                 width: '100%',
                                 boxSizing: 'border-box',
-                                background: '#111827',
-                                border: `1px solid ${shaking ? '#ef4444' : '#1f2937'}`,
+                                background: 'rgba(255,255,255,0.12)',
+                                border: `1px solid ${shaking ? '#ef4444' : 'rgba(255,255,255,0.25)'}`,
                                 borderRadius: '0.5rem',
                                 padding: '0.75rem 1rem',
-                                color: '#f9fafb',
+                                color: '#ffffff',
                                 fontSize: '1rem',
                                 outline: 'none',
                                 textAlign: 'center',
@@ -115,8 +115,8 @@ export default function PasscodeGate({
                             style={{
                                 display: 'block',
                                 width: '100%',
-                                background: '#ffffff',
-                                color: '#030712',
+                                background: '#FFC220',
+                                color: '#000000',
                                 border: 'none',
                                 borderRadius: '0.5rem',
                                 padding: '0.75rem',
