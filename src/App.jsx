@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { createRecord, updateRecord, listRecords } from './airtable.js';
 import { getFieldValue, matchesRecordId } from './utils/airtable.js';
 
@@ -31,7 +32,7 @@ function WalmartSpark({ width = 40, height = 40 }) {
 
 // ─── Intro Screen ─────────────────────────────────────────────────────────────
 
-function IntroScreen({ onStart, onAdmin }) {
+function IntroScreen({ onStart, onAdmin, onShowDemo }) {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [inputMode, setInputMode] = useState('speak');
@@ -44,12 +45,20 @@ function IntroScreen({ onStart, onAdmin }) {
 
     return (
         <div className="min-h-screen bg-[#0071CE] flex items-center justify-center p-8 relative">
-            <button
-                onClick={onAdmin}
-                className="absolute top-4 right-4 text-white/40 hover:text-white/70 text-sm transition-colors"
-            >
-                View sessions
-            </button>
+            <div className="absolute top-4 right-4 flex items-center gap-3">
+                <button
+                    onClick={onShowDemo}
+                    className="text-white/40 hover:text-white/70 text-sm w-6 h-6 rounded-full border border-white/30 hover:border-white/60 flex items-center justify-center transition-colors"
+                >
+                    ?
+                </button>
+                <button
+                    onClick={onAdmin}
+                    className="text-white/40 hover:text-white/70 text-sm transition-colors"
+                >
+                    View sessions
+                </button>
+            </div>
             <div className="max-w-sm w-full">
                 {/* Walmart Spark */}
                 <div className="mb-7">
@@ -711,6 +720,7 @@ export default function App() {
     const [isComplete, setIsComplete] = useState(false);
     const [isThankYou, setIsThankYou] = useState(false);
     const [questionOverride, setQuestionOverride] = useState(null); // null | 'speak' | 'type'
+    const [showDemo, setShowDemo] = useState(true);
 
     const recognitionRef = useRef(null);
     const animFrameRef = useRef(null);
@@ -917,30 +927,100 @@ export default function App() {
     }, [isSaving, interimTranscript, questionIndex, sessionRecordId, intervieweeName, intervieweeEmail, permStatus, stream, startListening, stopListening]);
 
     // ── Render ─────────────────────────────────────────────────────────────────
-    if (view === 'admin') return <AdminView onBack={() => setView('interview')} />;
-    if (!intervieweeName) return <IntroScreen onStart={(name, email, inputMode) => { if (inputMode === 'type') setPermStatus('text-only'); setIntervieweeName(name); setIntervieweeEmail(email); }} onAdmin={() => setView('admin')} />;
-    if (permStatus === 'checking') return <CheckingScreen />;
-    if (permStatus === 'blocked') return <BlockedScreen error={permError} onTextOnly={() => setPermStatus('text-only')} />;
-    if (isThankYou) return <ThankYouScreen name={intervieweeName} />;
-    if (isComplete) return <RecapScreen sessionRecordId={sessionRecordId} intervieweeName={intervieweeName} intervieweeEmail={intervieweeEmail} onThankYou={() => setIsThankYou(true)} />;
+    let content;
+    if (view === 'admin') {
+        content = <AdminView onBack={() => setView('interview')} />;
+    } else if (!intervieweeName) {
+        content = <IntroScreen onStart={(name, email, inputMode) => { if (inputMode === 'type') setPermStatus('text-only'); setIntervieweeName(name); setIntervieweeEmail(email); }} onAdmin={() => setView('admin')} onShowDemo={() => setShowDemo(true)} />;
+    } else if (permStatus === 'checking') {
+        content = <CheckingScreen />;
+    } else if (permStatus === 'blocked') {
+        content = <BlockedScreen error={permError} onTextOnly={() => setPermStatus('text-only')} />;
+    } else if (isThankYou) {
+        content = <ThankYouScreen name={intervieweeName} />;
+    } else if (isComplete) {
+        content = <RecapScreen sessionRecordId={sessionRecordId} intervieweeName={intervieweeName} intervieweeEmail={intervieweeEmail} onThankYou={() => setIsThankYou(true)} />;
+    } else {
+        const effectiveIsTextOnly = questionOverride === 'type' || (questionOverride === null && permStatus === 'text-only');
+        content = (
+            <InterviewScreen
+                questionIndex={questionIndex}
+                transcript={transcript}
+                interimTranscript={interimTranscript}
+                audioLevel={audioLevel}
+                isListening={isListening}
+                isSaving={isSaving}
+                savedAt={savedAt}
+                saveError={saveError}
+                onSubmit={handleSubmit}
+                transitioning={transitioning}
+                isTextOnly={effectiveIsTextOnly}
+                onTextChange={handleTextChange}
+                onToggleMode={handleToggleQuestionMode}
+                canSwitchToSpeak={permStatus === 'granted'}
+            />
+        );
+    }
 
-    const effectiveIsTextOnly = questionOverride === 'type' || (questionOverride === null && permStatus === 'text-only');
     return (
-        <InterviewScreen
-            questionIndex={questionIndex}
-            transcript={transcript}
-            interimTranscript={interimTranscript}
-            audioLevel={audioLevel}
-            isListening={isListening}
-            isSaving={isSaving}
-            savedAt={savedAt}
-            saveError={saveError}
-            onSubmit={handleSubmit}
-            transitioning={transitioning}
-            isTextOnly={effectiveIsTextOnly}
-            onTextChange={handleTextChange}
-            onToggleMode={handleToggleQuestionMode}
-            canSwitchToSpeak={permStatus === 'granted'}
-        />
+        <>
+            {content}
+            {showDemo && createPortal(
+                <div style={{
+                    position: 'fixed', inset: 0, zIndex: 20000,
+                    backgroundColor: 'rgba(0,0,0,0.6)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                    <div style={{
+                        backgroundColor: '#ffffff', borderRadius: 16,
+                        boxShadow: '0 24px 80px rgba(0,0,0,0.3)',
+                        width: 520, padding: '40px 44px',
+                        fontFamily: 'system-ui, sans-serif',
+                    }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
+                            <WalmartSpark width={32} height={32} />
+                            <span style={{ fontSize: 13, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: '#0071CE' }}>
+                                Walmart Center of Excellence
+                            </span>
+                        </div>
+                        <h2 style={{ fontSize: 24, fontWeight: 700, color: '#111', margin: '0 0 8px' }}>
+                            Business Discovery Interview
+                        </h2>
+                        <p style={{ fontSize: 15, color: '#555', margin: '0 0 28px', lineHeight: 1.6 }}>
+                            An AI-powered tool that captures stakeholder interviews and instantly surfaces insights for the CoE team — no notes, no follow-up, no lost context.
+                        </p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 32 }}>
+                            {[
+                                { n: '1', label: 'Stakeholder enters their name and answers 4 guided questions — by voice or text.' },
+                                { n: '2', label: 'Responses are transcribed and saved automatically to Airtable in real time.' },
+                                { n: '3', label: 'The CoE team reviews a structured summary and AI-generated insights without ever scheduling a debrief.' },
+                            ].map(({ n, label }) => (
+                                <div key={n} style={{ display: 'flex', gap: 14, alignItems: 'flex-start' }}>
+                                    <div style={{
+                                        width: 28, height: 28, borderRadius: '50%',
+                                        backgroundColor: '#0071CE', color: '#fff',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        fontSize: 13, fontWeight: 700, flexShrink: 0, marginTop: 1,
+                                    }}>{n}</div>
+                                    <p style={{ fontSize: 14, color: '#333', margin: 0, lineHeight: 1.6 }}>{label}</p>
+                                </div>
+                            ))}
+                        </div>
+                        <button
+                            onClick={() => setShowDemo(false)}
+                            style={{
+                                width: '100%', padding: '14px 0',
+                                backgroundColor: '#0071CE', color: '#fff',
+                                border: 'none', borderRadius: 10,
+                                fontSize: 15, fontWeight: 600, cursor: 'pointer',
+                            }}
+                        >
+                            Got it — show me the app
+                        </button>
+                    </div>
+                </div>,
+                document.body
+            )}
+        </>
     );
 }
